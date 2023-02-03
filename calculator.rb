@@ -4,19 +4,15 @@ class Calculator
     end
     def add num1,num2
         @result= num1.to_i+num2.to_i
-        return @result
     end
     def sub num1,num2
         @result=num1.to_i-num2.to_i
-        return @result
     end
     def multiply num1,num2
         @result = num1.to_i*num2.to_i
-        return @result
     end
     def division num1,num2
         @result = num1.to_i/num2.to_i
-        return @result
     end
 end
 
@@ -32,13 +28,19 @@ num2=gets.chomp()
 
 case choice.to_i
 when 1
-   p c.add num1,num2
+   p "#{num1} + #{num2} = #{c.add num1,num2}"
 when 2
-  p  c.sub num1,num2
+    p "#{num1} - #{num2} = #{c.sub num1,num2}"
 when 3
-  p  c.multiply num1,num2
+    p "#{num1} * #{num2} = #{c.multiply num1,num2}"
 when 4
-  p c.division num1,num2
+    begin
+        p "#{num1} / #{num2} = #{c.division num1,num2}"
+    rescue
+        p "Denominator cannot be 0\n Enter another number "
+        num2=gets.chomp()
+        p "#{num1} / #{num2} = #{c.division num1,num2}"
+    end
 else
-    p "Invalid option"
+    p "Invalid option "
 end
