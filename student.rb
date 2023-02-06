@@ -1,5 +1,7 @@
 require 'csv'
+require_relative 'calculator'
 class Student
+
 	attr_accessor :name, :roll_number, :bengali, :english, :maths, :computer, :total, :percentage, :percentile
 	def initialize name, roll, bengali,english,maths,computer,t,per
 		@name=name
@@ -14,11 +16,15 @@ class Student
 	end
 
 	def calculate_total
-		@total=@bengali+@english+@computer+@maths
+		@total=Calculator.new.add(@total,@bengali)
+		@total=Calculator.new.add(@total,@english)
+		@total=Calculator.new.add(@total,@maths)
+		@total=Calculator.new.add(@total,@computer)
 	end
 
 	def calculate_percentage
-		@percentage=(@total/400.0)*100
+		@percentage=Calculator.new.division(@total,400)
+		@percentage=Calculator.new.multiply(@percentage,100)
 	end
 end
 
@@ -60,7 +66,6 @@ def generate_csv students
 		csv<<["Name","Roll Number","Bengali","Maths","English","Computer","Total","Percentage","Percentile"]
 		students.each do |student|
 			list= marks.select {|num| num<student.total}
-			p list
 			size=list.length
 			student.percentile=(size.to_f/count.to_f)*100
 			csv<<[student.name,student.roll_number,student.bengali,student.maths,student.english,student.computer,student.total,student.percentage,student.percentile]
