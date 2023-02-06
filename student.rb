@@ -1,39 +1,109 @@
+require 'csv'
 class Student
-    @@i=0
-    @@Values=Array.new(0,0,0)
-    def initialize name,marks
+    attr_accessor :name, :roll_number, :bengali, :english, :maths, :computer, :total, :percentage, :percentile
+    def initialize name, roll, bengali,english,maths,computer,t,per,p
         @name=name
-        @marks=marks
+        @roll_number = roll
+        @bengali = bengali
+        @english = english
+        @maths = maths
+        @computer = computer
+        @total=t
+        @percentage=per
+        @percentile=p
     end
-    def total
-        t=@marks.sum(0.0)
-        @@Values[@@i]=t
-        @@i=@@i+1
-        return t
+
+    def calculate_total
+        @total = @bengali+@english+@maths+@computer
     end
-    def percentage
-        p=(@marks.sum(0.0)/@marks.size)*100
+    def calculate_percentage
+        @percentage=(@total/400.0)*100
+        p @percentage
     end
-    def percentile
-        @@Values.sort
-        count=0
-        for i in 0..@@Values.length
-            if @@Values[i]<@@Values[i+1]
-                count+=1
-            end
-        end
-        p=(count/@@Values.length)*100
+    def calculate_percentile
+        @percentile=(@percentage/10).floor
     end
-    def write_file
-        File.open("StudentData.txt",'a') do |line|
-            line.puts @name+" "
-            line.puts total.to_s+" "
-            line.puts @marks.to_s+" "
-            line.puts percentage.to_s+" "
-            line.puts percentile.to_s+"\r"
+    def to_s
+        "Name: #{@name}\nRoll Number: #{@roll_number}\nBengali: #{@bengali}\nMaths: #{@maths}
+        \nEnglish: #{@english}\nComputer: #{@computer}"
+    end
+end
+def store_file students
+    File.open("StudentGrade.txt","w") do |file|
+        students.each do |student|
+            file.puts "#{student.name},#{student.roll_number},#{student.bengali},#{student.maths},#{student.english},#{student.computer},#{student.total},#{student.percentage},#{student.percentile}"
         end
     end
 end
-mark=[45,65,89,90]
-s1=Student.new "Ashika",mark
-s1.write_file
+
+def read_file
+    students=[]
+    File.open("StudentGrade.txt","r") do |file|
+        file.each_line do |line|
+            data=line.split(',')
+            students<<Student.new(data[0],data[1].to_i,data[2].to_i,data[3].to_i,data[4].to_i,data[5].to_i,data[6].to_i,data[7].to_f,data[8].to_f)
+        end
+    end
+        students
+end    
+def display_info students
+    students.each do |student|
+        puts student
+        puts "-"*30
+    end
+end
+def generate_csv students
+    CSV.open("students.csv","w") do |csv|
+        csv<<["Name","Roll Number","Bengali","Maths","English","Computer","Total","Percentage","Percentile"]
+        students.each do |student|
+            csv<<[student.name,student.roll_number,student.bengali,student.maths,student.english,student.computer,student.total,student.percentage,student.percentile]
+        end
+    end
+end
+    
+    
+students=[]
+
+loop do
+    puts "1. Add student"
+    puts "2. Display Student Info"
+    puts "3. Generate CSV file"
+    puts "4. Exit"
+    p "Enter your choice: "
+    choice=gets.to_i
+
+    case choice
+    when 1
+        p "Enter the name: "
+        name=gets.strip()
+        p "Enter the roll number: "
+        roll=gets.to_i
+        p "Enter the marks in bengali: "
+        beng=gets.to_i
+        p "Enter the marks in maths: "
+        maths=gets.to_i
+        p "Enter the marks in english: "
+        eng=gets.to_i
+        p "Enter the marks in computer: "
+        comp=gets.to_i
+
+        student=Student.new name,roll,beng,maths,eng,comp,0,0,0
+        student.calculate_total
+        student.calculate_percentage
+        student.calculate_percentile
+
+        students<<student
+        store_file students
+    when 2
+        students = read_file
+        display_info students
+    when 3
+        students = read_file
+        generate_csv students
+    when 4
+        break
+    else 
+        p "Enter a valid choice: "
+        choice = gets.to_i
+    end
+end
