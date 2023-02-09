@@ -1,30 +1,32 @@
 require 'csv'
 require_relative 'calculator'
 class Student
-
+	TOTAL_MARKS=400
 	attr_accessor :name, :roll_number, :bengali, :english, :maths, :computer, :total, :percentage, :percentile
-	def initialize name, roll, bengali,english,maths,computer,t,per
+	def initialize name, roll, bengali,english,maths,computer,total,percentage
 		@name=name
 		@roll_number = roll
 		@bengali = bengali
 		@english = english
 		@maths = maths
 		@computer = computer
-		@total=t
-		@percentage=per
+		@total=total
+		@percentage=percentage
 		@percentile=0
 	end
 
 	def calculate_total
-		@total=Calculator.new.add(@total,@bengali)
-		@total=Calculator.new.add(@total,@english)
-		@total=Calculator.new.add(@total,@maths)
-		@total=Calculator.new.add(@total,@computer)
+		c= Calculator.new
+		@total=c.add(@total,@bengali)
+		@total=c.add(@total,@english)
+		@total=c.add(@total,@maths)
+		@total=c.add(@total,@computer)
 	end
 
 	def calculate_percentage
-		@percentage=Calculator.new.division(@total,400)
-		@percentage=Calculator.new.multiply(@percentage,100)
+		c= Calculator.new
+		@percentage=c.division(@total,TOTAL_MARKS)
+		@percentage=c.multiply(@percentage,100)
 	end
 end
 
@@ -47,16 +49,18 @@ def read_file
 	students
 end 
 
-def display_info students
+def display_info 
+	students=read_file
 	students.each do |student|
 		puts "Name: #{student.name}\nRoll Number: #{student.roll_number}\nBengali: #{student.bengali}\nMaths: #{student.maths}\nEnglish: #{student.english}\nComputer: #{student.computer}\nTotal: #{student.total},Percentage: #{student.percentage}"
 		puts "-"*30
 	end
 end
 
-def generate_csv students
-	marks=Array.new
+def generate_csv 
+	marks=[]
 	i=0
+	students=read_file
 	students.each do |student|
 		marks[i]=student.total
 		i=i+1
@@ -106,11 +110,11 @@ loop do
 		students<<student
 		store_file students
 	when 2
-		students = read_file
-		display_info students
+		#students = read_file
+		display_info
 	when 3
-		students = read_file
-		generate_csv students
+		#students = read_file
+		generate_csv
 	when 4
 		break
 	else 
