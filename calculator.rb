@@ -1,49 +1,60 @@
 class Calculator
-    def initialize
-        @result=0
-    end
-    def options choice,num1,num2
-        case choice.to_i
-        when 1
-            p "#{num1} + #{num2} = #{add num1,num2}"
-        when 2
-            p "#{num1} - #{num2} = #{sub num1,num2}"
-        when 3
-            p "#{num1} * #{num2} = #{multiply num1,num2}"
-        when 4
-            begin
-                p "#{num1} / #{num2} = #{division num1,num2}"
-            rescue
-                p "Denominator cannot be 0\n Enter another number "
-                num2=gets.chomp()
-                p "#{num1} / #{num2} = #{division num1,num2}"
-            end
-        else
-            p "Invalid option "
-        end
-    end
-    def add num1,num2
-        @result= num1.to_i+num2.to_i
-    end
-    def sub num1,num2
-        @result=num1.to_i-num2.to_i
-    end
-    def multiply num1,num2
-        @result = num1.to_i*num2.to_i
-    end
-    def division num1,num2
-        @result = num1.to_i/num2.to_i
-    end
+
+	def initialize (choice, a, b, *args)
+		@choice=choice
+		@a=a
+		@b=b
+		@args=args
+	end
+
+	def task
+		case @choice.to_i
+		when 1
+    	add
+    when 2
+			if (@args!=0)
+				p "More number of arguments passed expected 2"
+				p "Difference of first 2 numbers"
+			end
+      sub
+    when 3
+      multiply
+    when 4
+			division
+    else
+      p "Invalid option "
+		end
+  end
+
+  def add
+		if (@args.size!=0)
+    	p "Summation #{@args.reduce(@a+@b) {|initial_val,next_val| initial_val+next_val }}"
+		else
+			p "Summation #{@a+@b}"
+		end
+	end
+
+  def sub
+    p "Difference #{@a-@b}"
+	end
+
+  def multiply
+    if (@args.size!=0)
+    	p "Product #{@args.reduce(@a*@b) {|initial_val,next_val| initial_val*next_val }}"
+		else
+			p "Product #{@a*@b}"
+		end
+	end
+
+  def division
+		begin
+			p "Division #{@a/@b}"
+		rescue
+			p "Denominator cannot be 0\n Enter another number "
+			p "0"
+		end 
+  end
 end
 
-c = Calculator.new
-puts "Enter your choice 1.add\n2.sub\n3.multiply\n4.division"
-choice = gets.chomp()
-
-puts "Enter a number"
-num1=gets.chomp()
-
-puts "Enter a number"
-num2=gets.chomp()
-
-c.options choice,num1,num2
+calc = Calculator.new(4,10,5,7,8)
+calc.task
